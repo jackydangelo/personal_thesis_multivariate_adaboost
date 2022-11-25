@@ -1,0 +1,281 @@
+\chapter{Adaboost Multiclasse}
+\ \
+\newline
+L'algoritmo AdaBoost si pu\`o considerare una grande innovazione per risolvere problemi di Data Mining.
+Questo filtro viene applicato per casi dicotomici, ovvero dove le possibili uscite (i possibili risultati)
+possono essere due (es. vero/falso, s\`i/no, 1/0, ecc.). In questo capitolo si analizzeranno le estensioni
+che permettono di affrontare il caso multivariato ideate dagli stessi creatori del precedente filtro. Il primo chiamato
+Adaboost.M1, \`e il ponte necessario per arrivare all'algoritmo che \`e stato fondamentale per le ricerche svolte
+nel tirocinio, ovvero Adaboost.M2. Esso infatti parte dalle considerazioni del suo antecedente per migliorarne
+la struttura matematica e la performance. In questo capitolo non viene preso ancora 
+in considerazione il concetto di multi-label, 
+infatti entrambi gli algoritmi hanno, implicitamente, ancora un approccio single-label.
+\section{Adaboost.M1}
+\ \
+\newline
+\`E la versione pi\`u semplice tra gli adaboost multiclasse. L'algoritmo prende come input un training set di
+\begin{it}m\end{it} esempi \begin{math} D = ((x_1,y_1), . . . , (x_m,y_m)) \end{math} dove \begin{math}x_i\end{math} 
+\`e una istanza disegnata da qualche spazio X e rappresentata in qualche maniera (generalmente un vettore di valori attributi),
+ e \begin{math}y_i \in Y \end{math} \`e la classe etichetta associata con \begin{math}x_i\end{math}. Si assuma che
+il set di possibili etichette Y sia di cardinalit\`a \begin{it}k\end{it}, 
+dove \begin{it}k\end{it} \`e sempre un numero intero positivo.\\
+\newline
+Come nel caso dicotomico, l'adaboost ha la possibilit\`a di interagire con un altro algoritmo non specificato
+(chiamato WeakLearn), il quale verr\`a chiamato ripetutamente 
+per una serie di iterazioni. Al passo \begin{it}t\end{it}
+il booster provvede il WeakLearn con una distribuzione \begin{math}D_t\end{math} sul training set \begin{it}D\end{it}.
+ In risposta, il WeakLearn calcola un classificatore o una ipotesi
+ \begin{math}h_t : X \times Y \to \left[0,1\right]\end{math} che dovrebbe classificare correttamente
+una frazione di training set che ha grande probabilit\`a in relazione 
+alla distribuzione \begin{math}D_t\end{math}. Lo scopo del
+weak learner \`e quello di trovare un'ipotesi \begin{math}h_t\end{math} che minimizzi l'errore 
+\begin{math} \varepsilon_t=Pr{_i\sim D_t} [h_t(x_i\ne y_i)] \end{math}. Questo errore
+viene misurato rispetto alla distribuzione \begin{math}D_t\end{math} che \`e stata fornita dal weak learner stesso.
+Il processo continua per T volte e, per ultimo, 
+il booster combina le ipotesi \begin{math}h_1, ... , h_T\end{math}
+in una singola ipotesi finale \begin{math}h_{fin}\end{math}.\\
+\newline
+Non sono ancora stati specificati il metodo attraverso il quale \begin{math}D_t\end{math} \`e calcolata 
+ad ogni iterazione e come \begin{math}h_{fin}\end{math} viene calcolata.
+Esistono differenti modi di agire, Adaboost.M1 si comporta come segue:
+
+
+
+
+\begin{itemize}
+\item Per una sequenza di \begin{it}m\end{it} esempi di training 
+\begin{math}(x_1,y_1), ... (x_m,y_m)\end{math}\\
+con etichette \begin{math}y_i\in Y = \left\{1, ..., k\right\}\end{math}
+\item Si inizializza il vettore dei pesi: \begin{math} D_1(i)=1/m \end{math}
+\item Il processo viene effettuato per T iterazioni
+\item Sia \begin{math} \mathcal{L} \end{math} weak learner iniziale
+\end{itemize}
+
+\begin{enumerate}
+\item Viene chiamato il weak learner fornendolo della distribuzione \begin{math} D_t\end{math}
+\item In risposta, il weak learner 
+genere un'ipotesi \begin{math} h_t=\mathcal{L}(D,D_t)\end{math} 
+\item   \begin{math}\varepsilon = \sum_{i:h_t(x_i)\ne y_i}D_t(i)\end{math} si misura l'errore 
+di \begin{math} h_t\end{math}\\
+Se \begin{math}\varepsilon>\end{math}1/2, allora T=t-1 e il programma abortisce
+                          
+\item \begin{math} \alpha_t=\frac{\varepsilon_t}{1-\varepsilon_t}  \end{math} 
+determina il peso di \begin{math} h_t\end{math}
+
+\item \begin{math} D_{t+1}(i)=\frac{D_t(i)}{Z_t}\times \begin{cases} \alpha_t &  se  h_t(x_i)=y_i \\ 1 & altrimenti \end{cases}\end{math} \\
+\newline
+Aggiorna la distribuzione, dove \begin{math}Z_t \end{math} \`e un fattore di normalizzazione (scelto in 
+modo tale che \begin{math}D_{t+1} \end{math}
+sia una distribuzione).
+
+
+\end{enumerate}
+L'output sar\`a:
+\begin{center}
+\begin{math} h_{fin}(x)= \underset{y\in Y}{\operatorname{argmax}}\sum_{t:h_t(x)=y} log\frac{1}{\alpha_t} \end{math}
+\end{center}
+
+
+
+
+
+
+
+
+La distribuzione iniziale \begin{math}D_1\end{math} \`e scelta uniforme su \begin{it}D\end{it}, 
+quindi \begin{math}D_1\end{math}(i)=1/\begin{it}m\end{it} per tutte le \begin{it}i = 1, ..., m\end{it}.
+Per calcolare la distribuzione \begin{math}D_{t+1}\end{math} da \begin{math}D_t\end{math} e l'ultima 
+ipotesi weak \begin{math}h_t\end{math}, si moltiplica il peso dell'esempio \begin{it}i\end{it} per 
+\begin{math}\alpha_t \in \left[0,1\right)\end{math} se \begin{math}h_t\end{math} classifica \begin{math}x_i\end{math} correttamente, 
+altrimenti il peso rimane invariato. I pesi sono poi rinormalizzati dividendo per la costante di normalizzazione
+ \begin{math}Z_t\end{math}. 
+Con efficacia, esempi ``facili'' che sono stati classificati correttamente prendono 
+dalle precedenti ipotesi weak
+un peso minore, mentre esempi ``difficili''  che tendono ad essere spesso classificati in 
+maniera errata prendono 
+un peso maggiore. Perci\`o, adaboost focalizza un peso maggiore sugli esempi che sembrano pi\`u difficili 
+per il WeakLearn. \\
+\newline
+Il valore \begin{math}\alpha_t\end{math} \`e calcolato come funzione dell'errore 
+\begin{math}\varepsilon\end{math} secondo il punto (c).  
+L'ipotesi finale \begin{math}h_{fin}\end{math} \`e un voto pesato delle ipotesi weak. 
+Per una istanza data \begin{it}x\end{it}, \begin{math}h_{fin}\end{math} emette l'etichetta \begin{it}y\end{it} 
+che massimizza la somma dei pesi delle ipotesi weak predicendo quella specifica etichetta.
+ Il peso delle ipotesi \begin{math}h_t\end{math} \`e definito come \begin{math}\log(\frac{1}{\alpha_t})\end{math},
+ ovvero viene dato peso pi\`u grande alle ipotesi con errore pi\`u basso. \\
+\newline
+Il Teorema 1 dimostra l'importanza teorica di questo algoritmo. 
+Esso mostra che se le ipotesi weak in modo compatibile hanno errore solo leggermente migliore di 1/2, 
+allora l'errore di training dell'ipotesi finale \begin{math}h_{fin}\end{math} 
+si abbassa a zero in maniera esponenziale 
+(per il caso di classificazione binaria, questo significa che le ipotesi weak debbano 
+essere solo lievemente migliori della casualit\`a).\\
+\newline
+\textbf{Teorema 1.} Si supponga che l'algoritmo weak, ovvero WeakLearn, quando chiamato dall'Adaboost.M1, 
+generi ipotesi con errori \begin{math}\varepsilon_1, ... ,\varepsilon_T\end{math}, dove \begin{math}\varepsilon\end{math} 
+\`e definito come illustrato precedentemente. Si assuma ogni \begin{math}\varepsilon <\end{math}1/2 e si ponga 
+\begin{math}\gamma_t = 1/2-\varepsilon_t\end{math}. Allora 
+l'ipotesi finale \begin{math}h_{fin}\end{math} \`e maggiorata come segue.
+\begin{center}
+\begin{math}\frac{|\left\{i : h_{fin}(x_i)\ne y_i\right\}|}{m} \le \prod_{t=1}^T\sqrt{1-4\gamma_t^2}
+\le exp\left(-2\sum_{t=1}^T\gamma_t^2\right)\end{math}.
+\end{center}
+
+
+Il Teorema 1. implica che l'errore di training\footnote{L'errore di training o errore empirico 
+\`e basato sui dati di training, ovvero \`e quello che si commette durante la fase di apprendimento.} 
+dell'ipotesi finale generato da M1 \`e piccolo.
+Questo per\`o non implica necessariamente che l'errore di test\footnote{L'errore di test \`e l'errore di 
+generalizzazione che si stima sui nuovi dati.} 
+sia altrettanto piccolo. In pratica l'errore di test tende ad essere 
+migliore rispetto a quanto suggerisce la teoria, indicando un chiaro difetto in questa visione teorica.\\
+\newline
+Il principale svantaggio dell'Adaboost.M1 \`e quello di essere incapace di trattare le weak ipotesi 
+con errore superiore a 1/2. L'errore previsto dall'ipotesi che genera casualmente l'etichetta \`e 
+1-1/\begin{it}k\end{it}. Quindi, per \begin{it}k\end{it}\begin{math}=\end{math}2, le ipotesi weak hanno bisogno di essere leggermente migliori 
+della scelta casuale, ma quando \begin{it}k\end{it}\begin{math}>\end{math}2 (ovvero tutti i casi multidimensionali, per cui
+l'M1 \`e stato creato), la richiesta che l'errore sia meno di 1/2 \`e abbastanza forte e spesso pu\`o
+ essere difficile da conoscere.
+\newpage
+\vspace{1.5cm}
+
+
+
+
+
+\section{Adaboost.M2}
+\ \
+\newline
+Questa versione tenta di superare la difficolt\`a 
+trovata nella versione M1 
+``aumentando la comunicazione'' tra l'algoritmo di boosting e il weak learner.
+Per prima cosa, viene permesso al weak learner di generare pi\`u ipotesi dove, piuttosto che identificare una singola etichetta 
+in Y, sceglie un set di ``plausibili'' etichette. Questo pu\`o essere spesso pi\`u facile che sceglierne solo una.
+Per esempio, nello scenario OCR, pu\`o esser difficile dire se una particolare immagine \`e un ``7'' o un ``9'', ma \`e
+facile eliminare tutte le altre possibilit\`a. In questo caso, piuttosto che decidere tra 7 e 9, il set delle ipotesi pu\`o
+essere (7,9), indicando entrambe le etichette plausibili.\\
+\newline
+ Si permette inoltre al weak learner di dare un grado di plausibilt\`a, cos\`i ogni ipotesi weak dar\`a
+un vettore \begin{math} \left [ 0,1 \right ]^k \end{math}, dove le componenti con valori vicini a 0 o a 1 corrispondono
+a quelle etichette considerate rispettativamente implausibili o plausibili. Questo vettore non \`e costituito
+da probabilit\`a, la somma quindi non necessita di eguagliare a 1.\\
+\newline
+Mentre l'algoritmo weak acquista maggior potenza espressiva, si mette un requisito sulle performance delle ipotesi
+weak pi\`u complesso. Si introduce quindi il concetto di pseudo-loss, che \`e una misura di errore pi\`u
+sofisticata. Essa, a differenza degli errori che sono calcolati 
+rispetto alle distribuzioni sugli esempi di training,
+viene calcolata rispetto alla distruzione sull'insieme di tutte le coppie di esempi e etichette sbagliate.\\
+\newline
+Vedremo che Adaboost.M2 compie il boosting se 
+ogni ipotesi weak ha la pseudo-loss leggermente migliore del calcolo randomizzato. \\
+\newline
+Per formalit\`a si introduca questo concetto, una \begin{it}mislabel\end{it}  \`e una coppia (\begin{it}i,y\end{it}) dove \begin{it}i\end{it}
+ \`e l'indice dell'esempio di training e \begin{it}y\end{it} \`e un'etichetta sbagliata associata 
+all'esempio \begin{it}i\end{it}. Sia \begin{it}B\end{it} l'insieme di tutte le \begin{it}mislabel\end{it} 
+\begin{math}B=\left\{(i,y) : i \in \left\{1, ..., m \right\}, y \ne y_i \right\}\end{math}. 
+Una distribuzione mislabel \`e una distribuzione definita su \begin{it}B\end{it}.\\
+\newline
+
+Il procedimento del ciclo Adaboost.M2 \`e il seguente:\\
+\newline
+\begin{itemize}
+\item Per una sequenza di \begin{it}m\end{it} esempi \begin{math}(x_1,y_1), ... (x_m,y_m)\end{math}\\
+con etichette \begin{math}y_i\in Y = \left\{1, ..., k\right\}\end{math}
+\item Si inizializza il vettore dei pesi: \begin{math} D_1(i)=1/|B| per (i,y) \in B \end{math}
+\item Il processo \`e svolto per T volte specificando il numero di iterazioni
+\item Sia \begin{math} \mathcal{L} \end{math} weak learner iniziale
+\item \begin{math} B=\left\{(i,y) : i \in \left\{1..m\right\},y\ne y_i\right\} \end{math}
+
+\end{itemize}
+Per t =1, 2, ..., T:
+\begin{enumerate}
+
+\item Viene chiamato il weak learner, fornendolo di una distribuzione
+    \begin{math} D_t\end{math} 
+\item In risposta, il weak learner genera un'ipotesi  \begin{math}h_t : X \times Y \to \left[0,1\right]\end{math}
+\item Viene calcolata la pseudo-loss di \begin{math}h_t\end{math}:
+\begin{center}
+\begin{math}\varepsilon = \frac{1}{2} \sum_{(i,y)\in B}D_t(i,y)(1-h_t(x_i,y_i)+h_t(x_i,y))\end{math}.
+\end{center}                      
+\item \begin{math} \alpha_t=\frac{\varepsilon_t}{1-\varepsilon_t}  \end{math} 
+determina il peso di \begin{math} h_t\end{math}
+
+\item Si aggiorna \begin{math}D_t\end{math}:
+\begin{center}
+ \begin{math}
+  D_{t+1}(i,y)=\frac{D_t(i,y)}{Z_t}\alpha_t^{(1/2)(h_t(x_i,y_i)-h_t(x_i,y))}
+ \end{math}
+
+\end{center}
+                             
+dove \begin{math}Z_t \end{math} \`e un fattore di normalizzazione che rende \begin{math}D_{t+1} \end{math} 
+una distribuzione.
+
+
+\end{enumerate}
+L'output sar\`a:
+\begin{center}
+\begin{math} h_{fin}(x)= \underset{y\in Y}{\operatorname{argmax}}\sum_{t=1}^T log\frac{1}{\alpha_t}h_t(x,y) \end{math}
+\end{center}
+
+
+
+Per ogni passo \begin{it}t\end{it} di boosting, Adaboost.M2 fornisce il weak learner con la distribuzione 
+mislabel \begin{math}D_t\end{math}. In risposta, il weak learner calcola un'ipotesi \begin{math}h_t\end{math} della 
+forma \begin{math}h_t : X \times Y \to \left[0,1\right]\end{math}. Non ci sono restrizioni su
+ \begin{math}\sum_y h_t(x,y)\end{math}. In particolare, il vettore predizione non deve essere 
+una distribuzione di probabilit\`a. \\
+\newline
+Intuitivamente, si interpreta ogni mislabel (\begin{it}i,y\end{it}) come rappresentazione di una domanda binaria
+ del tipo: ``Predici che l'etichetta associata all'esempio \begin{math}x_i\end{math} sia \begin{math}y_i\end{math}
+ (ovvero l'etichetta corretta) o \begin{math}y\end{math} (una tra le etichette sbagliate)?''. 
+Con questa interpretazione, il peso \begin{math}D_t(i,y)\end{math} assegnato a questa mislabel rappresenta 
+l'importanza di distinguere l'etichetta sbagliata \begin{math}y\end{math} dall'esempio \begin{math}x_i\end{math}.\\
+\newline
+Un'ipotesi weak \begin{math}h_t\end{math} viene poi interpretata nella maniera seguente. Se \begin{math}h_t(x_i,y_i)=1\end{math}
+ e \begin{math}h_t(x_i,y)=0\end{math} allora \begin{math}h_t(i,y)\end{math} ha (correttamente) predetto che l'etichetta 
+di \begin{math}x_i\end{math} sia \begin{math}y_i\end{math} e non \begin{math}y\end{math} (\begin{math}h_t\end{math} 
+ritiene \begin{math}y_i\end{math} essere ``plausibile'' e \begin{math}y\end{math} ``non plausibile''. 
+In maniera analoga, \begin{math}h_t(x_i,y_i)=0\end{math} e \begin{math}h_t(x_i,y)=1\end{math} allora
+ \begin{math}h_t(i,y)\end{math} ha fatto la predizione sbagliata. 
+Se \begin{math}h_t(x_i,y_i) = h_t(x_i,y)\end{math} allora la predizione di \begin{math}h_t\end{math} \`e 
+fatta arbitrariamente.\\
+\newline
+Questa interpretazione porta a definire la psudo-loss dell'ipotesi \begin{math}h_t\end{math} rispetto alla 
+distribuzione mislabel \begin{math}D_t\end{math} come:
+\begin{center}
+\begin{math}\varepsilon = \frac{1}{2} \sum_{(i,y)\in B}D_t(i,y)(1-h_t(x_i,y_i)+h_t(x_i,y))\end{math}.
+\end{center}
+Pu\`o essere verificato che la pseudo-loss \`e minimizzata quando le etichette corrette \begin{math}y_i\end{math}
+ sono assegnate al valore 1 e le etichette scorrette \begin{math}y\ne y_i\end{math} al valore 0.\\
+\newline
+Lo scopo del weak learner \`e quello di trovare un'ipotesi \begin{math}h_t\end{math} con una pseudo-loss piccola. 
+Perci\`o, gli algoritmi ``standard'' \`e possibile che abbiano bisogno di qualche modifica per essere usati 
+in questa maniera. Dopo avere ricevuto \begin{math}h_t\end{math}, 
+la distribuzione mislabel \`e aggiornata usando una regola simile a quella utilizzata nell'Adaboost.M1. 
+L'ipotesi finale \begin{math}h_{fin}\end{math} restituisce come output, per un'istanza data \begin{it}x\end{it}, 
+l'etichetta \begin{it}y\end{it} che massimizza la media pesata delle ipotesi weak \begin{math}h_t(x,y)\end{math}.\\
+\newline
+Il seguente teorema pone un limite superiore all'errore di training dell'ipotesi finale. Si noti che questo teorema 
+necessita solo che le ipotesi weak abbiano la pseudo-loss minore di 1/2, senza considerare il numero delle classi.
+Nonostante le ipotesi weak siano state stimate rispetto alla pseudo-loss, si \`e certamente stimata l'ipotesi 
+finale utilizzando l'errore di misura ordinario.\\
+\newline
+\textbf{Teorema 2.} Si supponga un classificatore debole WeakLearn, che quando viene chiamato dall'Adaboost.M2, 
+generi ipotesi con la pseudo-loss \begin{math}\varepsilon_1, ... ,\varepsilon_T\end{math}, dove \begin{math}\varepsilon\end{math}
+\`e definita come nello schema precedente. Sia \begin{math}\gamma_t = \frac{1}{2}-\varepsilon_t\end{math}.
+ Allora il margine superiore dell'ipotesi finale \begin{math}h_{fin}\end{math}:
+\begin{center}
+\begin{math}\frac{|\left\{i : h_{fin}(x_i)\ne y_i\right\}|}{m} \le (k-1)\prod_{t=1}^T\sqrt{1-4\gamma_t^2}
+\le (k-1)exp\left(-2\sum_{t=1}^T\gamma_t^2\right)\end{math}. 
+\end{center}
+
+
+dove k \`e il numero di classi.\\
+
+
+
+
+
+
+

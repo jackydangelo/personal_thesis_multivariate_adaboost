@@ -1,0 +1,202 @@
+\chapter{Appendice}
+\ \
+\newline
+\section{Loss Function}
+Nell'ottimizzazione matematica, statistica, teoria delle decisioni e machine learning, la loss function 
+(funzione di perdita) o cost function (funzione di costo) \`e una funzione che elabora un evento o un valore 
+di una o pi\`u variabili in un numero reale intuitivamente rappresentando qualche ``costo'', associato all'evento. 
+Un problema di ottimizzazione cerca di ridurre la loss function. Una funzione oggetto \`e o una loss 
+function o la sua negativa (chiamata qualche volta regard function o utility function).\\
+\newline
+In statistica, tipicamente una loss function \`e utilizzata per stimare parametri, e l'evento in questione \`e 
+qualche funzione della differenza tra valori stimati e valori reali per un'istanza di dati. 
+Il concetto, fu introdotto in statistica da A. Wald. In economia, per esempio, questa \`e solitamente 
+l'economic costo (o regret). Nella classificazione \`e la pena per una classificazione sbagliata di un esempio. 
+\section{Logit Function}
+La funzione logit \`e una funzione usata in matematica, specialmente in statistica. Quando il parametro di una 
+funzione rappresenta una probabilit\`a \begin{it}
+                                        p
+                                       \end{it}, la funzione logit fornisce il log-odds, ovvero il logaritmo 
+delle odds p/(1-p). \\
+Il logit di un numero \begin{math}
+                       p
+                      \end{math} compreso tra 0 e 1 \`e dato dalla formula:
+\begin{center}logit
+ \begin{math}
+  (p) = 
+ \end{math}log\begin{math}
+               (\frac{p}{1-p}) = -  
+              \end{math}log\begin{math}
+                             (\frac{1}{p}-1)
+                            \end{math}
+
+
+
+\end{center}
+
+
+
+  
+\section{Moltiplicatori di Lagrange}
+Nella giustificazione della costante addittiva nell'algoritmo Adaboost SAMME, viene utilizzato un processo 
+di ricerca dei massimi e minimi di una funzione conosciuto col nome di ``moltiplicatori di Lagrange''. \\
+Per una comprensione migliore si deve, per prima cosa, esaminare la teoria elementare meglio conosciuta. 
+Concerne col problema di trovare, per una funzione \begin{math}
+                                                    f(x,y,\dots)
+                                                   \end{math} in una regione data \begin{it}
+                                                                                   G
+                                                                                  \end{it}, il punto 
+\begin{math}
+ x_0, y_0, \dots 
+\end{math} in \begin{it}G\end{it} che la funzione 
+\begin{math} f(x,y,\dots) \end{math} ha come massimo o minimo (estremi) rispetto a tutti i punti di G nelle 
+vicinanze di \begin{math}
+              x_0, y_0, \dots
+             \end{math}.
+Questo problema ha sempre una soluzione, in accordo con il teorema di Weiestrass che dice:\\
+ \textbf{Teorema di Weiestrass:} Ogni funzione che \`e continua in un dominio chiuso G delle variabili possiede 
+un valore pi\`u grande e uno pi\`u piccolo all'interno o al margine del dominio.\\
+Se la funzione \begin{math} f(x,y,\dots) \end{math} \`e differenziabile in G e se un valore estremo \`e 
+raggiunto da un punto interno \begin{math}
+              x_0, y_0, \dots
+             \end{math}, allora le derivate di \begin{math} f(x,y,\dots) \end{math} rispetto ad ogni variabili 
+si annullano in \begin{math}
+              x_0, y_0, \dots
+             \end{math}, in altre parole, il gradiente di \begin{it}
+                                                           f
+                                                          \end{it} \`e uguale a zero.\\
+Ma questa condizione necessaria non \`e condizione sufficiente, come pu\`o essere visto dall'esistenza 
+dei punti di flesso e quelli di sella (per esempio \begin{math}
+                                                    f(x) = x^3
+                                                   \end{math} a \begin{math}
+                                                                 x_0=0
+                                                                \end{math}; 
+\begin{math}
+ f(x,y) = xy
+\end{math} a \begin{math}
+              x_0=0, y_0=0
+             \end{math}). In generale, punti di cui tutte le derivate si annullano, ovvero che 
+\begin{math}
+ \partial f = 0
+\end{math}, 
+sono conosciuti come \begin{it}punti stazionari\end{it}. Punti stazionari che forniscono un massimo e un minimo relativi ad una 
+vicinanza appropriata sono chiamati ``estremi''.
+Se le variabili non sono indipendenti, ma soggette a restrizioni \begin{math}
+                                                                  g_1(x,y,\dots) = 0, 
+g_2(x,y,\dots) = 0, \dots, g_h(x,y,\dots) = 0   \end{math}, si ottengono condizioni necessarie per un punto, 
+estremo o stazionario per mezzo dei moltiplicatori di Lagrange.\\
+Questo metodo consiste nel seguente procedimento:
+Per trovare un punto all'interno del dominio di variabili indipendenti di cui \begin{math}
+                                                                               f(x,y,\dots)
+                                                                              \end{math} ha un punto estremo o 
+solamente uno stazionario, si introducono \begin{it}
+                                           h
+                                          \end{it}+1 nuovi parametri, i ``moltiplicatori'', 
+\begin{math}
+ \lambda_0, \lambda_1, \dots, \lambda_h
+\end{math} e si costruisce la funzione
+\begin{center}
+ \begin{math}
+  F = \lambda_0f + \lambda_1g_1 + \lambda_2g_2+ \dots, \lambda_hg_h
+ \end{math}
+
+\end{center}
+A questo punti si determinano le quantit\`a \begin{math}
+              x_0, y_0, \dots
+             \end{math}, e i rapporti di \begin{math}
+ \lambda_0, \lambda_1, \dots, \lambda_h
+\end{math} attraverso le equazioni
+\begin{center}
+ \begin{math}
+  \frac{\partial F}{\partial{x}} = 0, \frac{\partial F}{\partial{y}} = 0, \dots 
+ \end{math}
+
+\end{center}
+
+\begin{center}
+ \begin{math}
+  \frac{\partial F}{\partial{\lambda_1}} = g_1 = 0, \dots, \frac{\partial F}{\partial{\lambda_h}} = g_h = 0 
+ \end{math}
+
+\end{center} 
+Queste equazioni rappresentano le condizioni desiderate 
+per il carattere stazionario di \begin{math}
+                                 f(x,y,\dots)
+                                \end{math} o l'estremo di \begin{math}
+                                                           f
+                                                          \end{math} sotto le restrizioni date. 
+Se \begin{math}
+    \lambda_0 \ne 0
+   \end{math} si potrebbe (e dovrebbe) mettere \begin{math}
+                                                \lambda_0 = 1
+                                               \end{math} perch\`e \begin{it}
+                                                                    F
+                                                                   \end{it}
+ \`e omogeneo nelle quantit\`a \begin{math}      \lambda_i           \end{math}. Il metodo di Lagrange \`e semplicemente 
+uno strumento che, preservando la simmetria, evita l'eliminazione esplicita di \begin{it}
+                                                                                h
+                                                                               \end{it} nelle variabili 
+dalla funzione \begin{math} f(x,y,\dots)
+                                \end{math}, mediante restrizioni sussidiarie. Si considerino ora due 
+istruttivi, sebbene elementari, esempi.\\
+\begin{enumerate}
+ \item Di tutti i triangoli, dati la base e il perimetro, il triangolo isoscele ha l'area pi\`u grande. 
+Di tutti i triangoli, dati la base e l'area, il triangolo isoscele ha il perimetro pi\`u lungo. Queste considerazioni 
+possono essere risolte senza calcoli considerando l'ellissi per il quale la base data \`e la linea che 
+connette i due fuochi. 
+\item Problema di Steiner. Dati tre punti \begin{math}
+                                           A_1, A_2, A_3
+                                          \end{math}, i quali formano un angolo acuto, un quarto punto P deve 
+essere trovato affinch\`e la somma delle distanze \begin{math}
+                                                   PA_1 + PA_2 + PA_3
+                                                  \end{math} sia la pi\`u piccola possibile. Si consideri un 
+cerchio attraverso P con centro in \begin{math}
+                                    A_3
+                                   \end{math}; allora P deve essere posto sul cerchio in modo tale 
+che \begin{math}
+     PA_1 + PA_2
+    \end{math} sia la pi\`u piccola possibile. Lo stesso ragionamento deve essere fatto intercambiando i 
+punti 1, 2, 3; tutti i tre angoli \begin{math}
+                                      A_1PA_2, A_2PA_3, A_3PA_1
+                                     \end{math} devono, perci\`o, essere equivalenti e pari a 
+\begin{math}
+ 2\pi
+\end{math}/3. Il problema \`e quindi risolto.
+
+
+
+
+
+
+\end{enumerate}
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                          
+
+
+
+
+
+
+
+
+
+
+
+\ \

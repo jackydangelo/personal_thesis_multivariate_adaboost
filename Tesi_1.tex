@@ -1,0 +1,113 @@
+% Documento pronto da stampare
+\documentclass[a4paper,12pt,oneside]{report}
+
+
+\usepackage{xcolor}
+% Imposto la lingua italiana
+\usepackage[italian]{babel}
+
+
+% Settaggio dei margini 
+\topmargin 0cm 
+\headsep 1cm 
+\headheight 0.6cm
+\textwidth 14.6cm
+\textheight 21.8cm
+\evensidemargin 1cm 
+\oddsidemargin 1cm
+% 				VEDERE COME METTERE INTERLINEA!!!!  \linespread{1.1}
+% Pacchetti da includere per...
+
+\newtheorem{theorem}{Teorema}[section]  % sec. number + seq. number
+\newtheorem{definition}[theorem]{Definizione}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollario}
+\newtheorem{proposition}[theorem]{Proposizione}
+\newtheorem{remark}[theorem]{Osservazione}
+\newtheorem{example}[theorem]{Esempio}
+\renewcommand{\labelenumi}{(\alph{enumi})}
+ 
+
+\usepackage{amsthm}
+
+% simboli matematici
+\usepackage{amsmath} 
+\usepackage{amssymb} 
+\usepackage{amsfonts} 
+\usepackage{bbm} 
+% simboli vari
+\usepackage{textcomp}                      
+\usepackage[mathscr]{euscript}
+
+% figure 
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{subfigure}
+
+
+% intestazioni
+\usepackage{fancyhdr}
+
+% encoding dei caratteri
+\usepackage[ansinew]{inputenc}
+\usepackage[OT1]{fontenc}
+
+% riferimenti cliccabili nel pdf
+\usepackage[pdftex]{hyperref} 
+
+\usepackage{array}
+
+% Stile della pagina
+\fancyhead[L]{\chaptername \thechapter}
+\fancyhead[LO]{\thesection} \fancyhead[RO]{\sectionmark}
+\lhead{\slshape Ch. \thechapter}
+
+% Configurazioni varie
+
+% nonumchapter serve per introduzioni, prefazioni, ecc.
+% titola come un capitolo ma senza numero
+\def\nonumchapter#1{
+	\chapter*{#1}
+	\addcontentsline{toc}{chapter}{#1}
+}
+
+% estensioni e cartella delle immagini (non necessario...)
+\DeclareGraphicsExtensions{gif,eps,png,jpeg}
+\graphicspath{{./eps/}}
+
+% crea una nuova lunghezza e gli assegna un valore
+\newlength{\defbaselineskip}
+\setlength{\defbaselineskip}{\baselineskip}
+
+% comando per settare  la variabile \baselineskip come multiplo di \defbaselineskip
+\newcommand{\setlinespacing}[1]%
+           {\setlength{\baselineskip}{#1 \defbaselineskip}}
+
+% permette l'inserimento "rapido" del virgolettato (ad es. per citazioni)
+\newcommand{\virgolette}[1]{``#1''}
+
+% Settaggio interlinea 
+\setlinespacing{1.5}
+
+
+% Impostazioni della pagina
+\usepackage{indentfirst}
+\cfoot{\thepage}
+
+
+%opening
+
+
+\begin{document}
+\pagenumbering{arabic}
+\include{frontespizio}
+\tableofcontents
+\include{intro}
+\include{adaboost}
+\include{AdaboostMulticlasse}
+\include{alternative}
+\include{conclusioni}
+\include{appendice}
+\include{riferimenti}
+\include{ringraziamenti}
+\end{document}
